@@ -80,6 +80,8 @@ class Matrix:
                     if oldone.arr[i][p] != 0:
                         am.exchange(i, p)
                         break
+                else:
+                    raise Exception("matrix is non-invertable")
             if oldone.arr[p][p] != 1:
                 dic = { f'r{p}': 1/oldone.arr[p][p] }
                 am.rop(p, **dic)
@@ -198,6 +200,21 @@ class test_Matrix:
         compare = np.matrix(arr).getI()
         passed = np.array_equal(result, compare)
         return (result, compare, passed)
+    @test
+    def nonInvertalbe():
+        arr = [[ 1,0],
+               [ 0,0]]
+        m1 = Matrix(2,2).setFrom(arr)
+        compare = "throw"
+        result = "throw"
+        try:
+            ~m1
+        except Exception as e:
+            pass
+        else:
+            result = "no throw"
+        passed = result == compare
+        return (result, compare, passed)
 
 
 if __name__ == '__main__':
@@ -210,3 +227,4 @@ if __name__ == '__main__':
     test_Matrix.transpose()
     test_Matrix.power()
     test_Matrix.invert()
+    test_Matrix.nonInvertalbe()
