@@ -1,6 +1,7 @@
 #!/bin/python
 
 import copy
+from augmented_matrix import AugmentedMatrix
 
 class Matrix:
     def __init__(self, rows, cols):
@@ -72,12 +73,26 @@ class Matrix:
             raise Exception("I'm too weak to solve this.")
         oldone = Matrix(self.rows, self.cols).setFrom(self.arr);
         invert = Matrix.Identiy(self.cols)
+        am = AugmentedMatrix(oldone, invert)
         for p in range(self.cols):
-            if self.arr[p][p] == 0:
-                ... #TODO exchange
-            if self.arr[p][p] != 1:
-                ... #TODO scaler
-            #TODO reduce
+            if oldone.arr[p][p] == 0:
+                for i in range(p, oldone.rows):
+                    if oldone.arr[i][p] != 0:
+                        am.exchange(i, p)
+                        break
+            if oldone.arr[p][p] != 1:
+                dic = { f'r{p}': 1/oldone.arr[p][p] }
+                am.rop(p, **dic)
+            for i in range(oldone.rows):
+                if i == p:
+                    continue
+                if oldone.arr[i][p] == 0:
+                    continue
+                dic = {
+                        f'r{i}': 1,
+                        f'r{p}': -oldone.arr[i][p]
+                      }
+                am.rop(i, **dic)
         return invert
     def __eq__(self, other):
         if self.rows != other.rows:
@@ -176,7 +191,7 @@ class test_Matrix:
         return (result, compare, passed)
     @test
     def invert():
-        arr = [[1,2],
+        arr = [[0,2],
                [3,4]]
         m1 = Matrix(2,2).setFrom(arr)
         result = np.matrix((~m1).arr)
