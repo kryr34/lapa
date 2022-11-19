@@ -1,7 +1,6 @@
 #!/bin/python
 
 import numpy as np
-from matrix import Matrix
 from test import test
 
 class AugmentedMatrix:
@@ -72,6 +71,7 @@ class test_Argument:
         return (result, compare, passed)
 
 if __name__ == '__main__':
+    from matrix import Matrix
     print("This is class and its test of argument matrix.")
     test_Argument.exchange()
     test_Argument.scaler()
