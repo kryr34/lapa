@@ -1,5 +1,7 @@
 from colorama import Fore, init
 
+init(autoreset=True)
+
 def test(func):
     def inner():
         (result, compare, passed) = func()
