@@ -15,6 +15,9 @@ class AugmentedMatrix:
         self.b.arr[ra] = self.b.arr[rb]
         self.b.arr[rb] = tmp
     def rop(self, target_row, **kwargs):
+        '''
+        Row OPerate
+        '''
         tmp = [0]*self.a.cols
         for key,value in kwargs.items():
             if key[0] == 'r':
