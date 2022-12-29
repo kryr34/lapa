@@ -1,6 +1,6 @@
 #!/bin/python
 
-from matrix import Matrix
+from utils import Matrix
 
 t = Matrix(3,3).setFrom([[1/6, 1/2, 1/3],
                          [1/2, 1/4, 1/4],
