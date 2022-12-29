@@ -1,3 +1,5 @@
+import logging
+
 import re
 
 class Polynomial:
@@ -22,6 +24,7 @@ class Polynomial:
             return b/a
         if len(self._coeffs) == 3:
             c, b, a = self._coeffs
+            logging.debug(f"a,b,c: {a,b,c}")
             return {
                     (-b+(b**2-a*c*4)**0.5) / (a*2),
                     (-b-(b**2-a*c*4)**0.5) / (a*2)
@@ -36,6 +39,14 @@ class Polynomial:
         for i, _coeffs in enumerate(other._coeffs):
             newone._coeffs[i] += _coeffs
         return newone._reduce()
+    def __neg__(self):
+        newone = Polynomial(*(self._coeffs[::-1]))
+        for i, _coeffs in enumerate(newone._coeffs):
+            newone._coeffs[i] = -_coeffs
+        return newone
+    def __sub__(self, other):
+        return self + (-other)
+
     def __mul__(self, other):
         # Polynomial * Scaler
         if type(other) is int or type(other) is float:
@@ -51,7 +62,7 @@ class Polynomial:
         remove zero leading coeffs.
         '''
         i = len(self._coeffs)-1
-        while i>=0 and self._coeffs[i] == 0:
+        while i>0 and self._coeffs[i] == 0:
             self._coeffs = self._coeffs[:-1]
             i-=1
         return self

@@ -17,6 +17,8 @@ class Matrix:
                 raise Exception("number of cols doesn't match")
         self.arr = copy.deepcopy(arr)
         return self
+    def copy(self):
+        return copy.deepcopy(self)
     def __add__(self, other):
         if self.rows != other.rows:
             raise Exception("number of rows doesn't match")
@@ -38,11 +40,11 @@ class Matrix:
                 newone.arr[i][j] = self.arr[i][j] - other.arr[i][j]
         return newone
     def __mul__(self, other):
-        if type(other) is int or type(other) is float:
+        if type(other) is not Matrix:
             newone = Matrix(self.rows, self.cols)
             for i in range(self.rows):
                 for j in range(self.cols):
-                    newone.arr[i][j] += self.arr[i][j] * other;
+                    newone.arr[i][j] = self.arr[i][j] * other;
             return newone
 
         if self.cols != other.rows:
