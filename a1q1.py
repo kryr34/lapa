@@ -1,7 +1,7 @@
 #!/bin/python
 
 from math import pi, log
-from matrix import Matrix
+from utils import Matrix
 
 a = Matrix(2,2).setFrom([[2, -2],
                          [3, -5]])
