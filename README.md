@@ -1,4 +1,4 @@
-# the-matrix
+# Linear Algebra Programming Assignment
 ## File Structure
 ```
 .
