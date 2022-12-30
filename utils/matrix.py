@@ -1,4 +1,4 @@
-#!/bin/python
+import logging
 
 import numpy as np
 import copy
@@ -112,3 +112,87 @@ class Matrix:
     def __str__(self):
         return str(np.matrix(self.arr))
 
+    def rref(self):
+        '''
+        reduced row echelon form
+        '''
+        ref = self.copy()
+        zeroVector = Matrix(self.rows, 1)
+        am = AugmentedMatrix(ref, zeroVector)
+        c = 0
+        r = 0
+
+        logging.debug(f"before\n{ref}")
+        while c < ref.cols and r < ref.rows:
+            if ref.arr[r][c] == 0:
+                for i in range(r, ref.rows):
+                    if ref.arr[i][c] != 0:
+                        logging.debug(f"exchange")
+                        am.exchange(i, r)
+                        break
+                else:
+                    c += 1
+                    continue
+            if ref.arr[r][c] != 1:
+                logging.debug(f"normalizen")
+                dic = { f'r{r}': 1/ref.arr[r][c] }
+                am.rop(r, **dic)
+            for i in range(ref.rows):
+                if i == r:
+                    continue
+                if ref.arr[i][c] == 0:
+                    continue
+                dic = {
+                        f'r{i}': 1,
+                        f'r{r}': -ref.arr[i][c]
+                      }
+                am.rop(i, **dic)
+            r += 1
+        return ref
+
+    def getNul(self):
+        rref_de_mat = self.rref()
+        logging.debug(f"\n{rref_de_mat}")
+
+        free_varible_and_basis = {}
+        pivots = set()
+        r = 0
+        for c in range(rref_de_mat.cols):
+            logging.debug(f"finding pivots: r={r}, c={c}")
+            pivot = rref_de_mat.arr[r][c]
+            if pivot == 1:
+                logging.debug(f"find pivot: r={r}, c={c}")
+                pivots |= {c}
+                logging.debug(f"pivots: {pivots}")
+                r += 1
+        logging.debug(f"pivots: {pivots}")
+        for free_v in set(range(rref_de_mat.cols))-pivots:
+            free_varible_and_basis[free_v] = [0] * self.cols
+            free_varible_and_basis[free_v][free_v] = 1
+        logging.debug(free_varible_and_basis)
+
+        if len(free_varible_and_basis) == 0:
+            logging.debug("no free varible")
+            return Matrix(self.cols,1)
+
+        for p in range(rref_de_mat.cols):
+            povit = rref_de_mat.arr[p][p]
+            if povit == 0:
+                continue
+            for i in range(p+1, rref_de_mat.cols):
+                free_v = rref_de_mat.arr[p][i]
+                if free_v != 0:
+                    free_varible_and_basis[i][p] = -free_v
+            logging.debug(free_varible_and_basis)
+
+        number_of_base = len(free_varible_and_basis)
+        basis = list(free_varible_and_basis.values())
+        #basis = [Matrix(1,self.cols).setFrom([v]).tran() for v in free_varible_and_basis.values()]
+        #return basis
+        logging.debug(f"basis list {basis}")
+
+        nuls = Matrix(number_of_base, self.cols).setFrom(basis)
+        logging.debug(f"before transpose\n{nuls}")
+        nuls = nuls.tran()
+        logging.debug(f"after transpose\n{nuls}")
+        return nuls

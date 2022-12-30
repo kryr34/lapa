@@ -1,6 +1,8 @@
 #!/bin/python
 import logging
-#logging.basicConfig(level=logging.DEBUG, format="[ %(levelname)8s | %(message)s ]")
+from colorama import Fore, Back, Style
+FORMAT = Fore.RED + "[%(filename)s:%(lineno)s - %(funcName)s() ] " + Fore.BLUE + "%(message)s" + Fore.RED + "[END LOGGING]" + Fore.RESET
+#logging.basicConfig(level=logging.DEBUG, format=FORMAT)
 
 from utils import Matrix as BaseMat, Polynomial
 
@@ -27,11 +29,10 @@ class Matrix(BaseMat):
         characteristic = Matrix.determinant(mat-l)
         return characteristic.solve()
 
-    def getNul(mat):
-        ...
-
     def getEigenvectorBy(mat, eigenvalue):
         mat = mat - Matrix.Identiy(2)*eigenvalue
+        basis = mat.getNul()
+        return basis
 
 
 a = Matrix(2,2).setFrom([[-1, 2],
@@ -54,17 +55,18 @@ x = Matrix(2,2).setFrom([[1, 2],
 
 z = Matrix(2,2).setFrom([[0, 0],
                          [0, 0]])
-
-
 testcase = {
-        "A": a, "B": b, "C": c,
+        "A": a, "B": b,
+        "C": c,
         "V": v, "W": w, "X": x, "Z": z,
         }
 
 for name, mat in testcase.items():
-    print(f"test matrix {name}")
+    print(f"test matrix {name} " + "="*40)
+    logging.debug(f"\n{mat}")
     eigenvalues = mat.getEigenvalues()
-    print(f"\teigenvalues is {eigenvalues}")
-    for ev in eigenvalues:
-        eigenvector = mat.getEigenvectorBy(ev)
-        print('\t'+str(eigenvector))
+    print(f"eigenvalues is {eigenvalues}")
+    for eva in eigenvalues:
+        eve = mat.getEigenvectorBy(eva)
+        #print(f">for eigenvalue= {eva},\neigenvector=\n{eve}")
+        print(f">for eigenvalue= {eva},\nbasis of eigenspace(aka eigenvectors)=\n{eve}")

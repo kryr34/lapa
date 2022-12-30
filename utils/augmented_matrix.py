@@ -1,3 +1,5 @@
+import logging
+
 class AugmentedMatrix:
     def __init__(self, a, b):
         self.a = a
@@ -13,12 +15,18 @@ class AugmentedMatrix:
         '''
         Row OPerate
         '''
+        logging.debug(f"rop target:{target_row} <- {kwargs}")
         tmp = [0]*self.a.cols
         for key,value in kwargs.items():
             if key[0] == 'r':
                 n = int(key[1:])
                 for i in range(self.a.cols):
-                    tmp[i] += self.a.arr[n][i] * value
+                    logging.debug(f"Today is friday {tmp[i]}")
+                    what = self.a.arr[n][i] * value
+                    what = round(what*1000000)/1000000
+                    logging.debug(f"in CA {self.a.arr[n][i]} * {value} |> round= {what}")
+                    tmp[i] += what
+                    logging.debug(f"shoot! {tmp[i]}")
         self.a.arr[target_row] =tmp
         tmp = [0]*self.b.cols
         for key,value in kwargs.items():
@@ -27,6 +35,7 @@ class AugmentedMatrix:
                 for i in range(self.b.cols):
                     tmp[i] += self.b.arr[n][i] * value
         self.b.arr[target_row] =tmp
+        logging.debug(f"\n{self.a}")
     def toNpmatrix(self):
         return np.append(self.a.arr, self.b.arr, axis=1)
 
